@@ -15,7 +15,7 @@ namespace Join
                 from emp in staff
                 from dep in deps
                 where emp.DepartmentId == dep.Id
-                select new { emp = emp.Name, dep =  dep.Name };
+                select new { emp = emp.Name, dep = dep.Name };
             foreach(var i in query)
             {
                 Console.WriteLine(i);
