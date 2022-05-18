@@ -37,7 +37,12 @@ namespace Join
                     on dep.Id equals emp.DepartmentId
                 into staffs
                 from stafsfWithNull in staffs.DefaultIfEmpty()
-                select new { dep = dep.Name, emp = stafsfWithNull?.Name ?? "noData" };
+                select new { emp = stafsfWithNull?.Name ?? "noData", dep = dep.Name  };
+
+            var queryFull =
+                queryLeft.Union(queryRight);
+
+
 
             foreach (var i in queryLeft)
             {
