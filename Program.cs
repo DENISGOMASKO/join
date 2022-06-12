@@ -11,33 +11,51 @@ namespace Join
             var staff = data.Staff;
             var deps = data.Departments;
 
-            var query =
-                from emp in staff
-                from dep in deps
-                where emp.DepartmentId == dep.Id
-                select new { emp = emp.Name, dep = dep.Name };
+            //var query =
+            //    from emp in staff
+            //    from dep in deps
+            //    where emp.DepartmentId == dep.Id
+            //    select new { emp = emp.Name, dep = dep.Name };
 
-            var queryInner =
-                from emp in staff
-                join dep in deps
-                    on emp.DepartmentId equals dep.Id
-                select new { emp = emp.Name, dep = dep.Name };
+            //var queryInner =
+            //    from emp in staff
+            //    join dep in deps
+            //        on emp.DepartmentId equals dep.Id
+            //    select new { emp = emp.Name, dep = dep.Name };
 
-            var queryLeft =
-                from emp in staff
-                join dep in deps
-                    on emp.DepartmentId equals dep.Id
-                into department
-                from depWithNull in department.DefaultIfEmpty()
-                select new { emp = emp.Name, dep = depWithNull?.Name ?? "noData" };
+            var queryInner = staff.Join(deps, emp => emp.DepartmentId, dep => dep.Id,
+                (emp, dep) => new { emp = emp.Name, dep = dep.Name });
 
-            var queryRight =
-                from dep in deps
-                join emp in staff
-                    on dep.Id equals emp.DepartmentId
-                into staffs
-                from stafsfWithNull in staffs.DefaultIfEmpty()
-                select new { emp = stafsfWithNull?.Name ?? "noData", dep = dep.Name  };
+
+            //var queryLeft =
+            //    from emp in staff
+            //    join dep in deps
+            //        on emp.DepartmentId equals dep.Id
+            //    into department
+            //    from depWithNull in department.DefaultIfEmpty()
+            //    select new { emp = emp.Name, dep = depWithNull?.Name ?? "noData" };
+
+            var queryLeft = staff
+                .GroupJoin(deps, emp => emp.DepartmentId, dep => dep.Id, (emp, department) => new { emp, department })
+                .SelectMany(@t => @t.department.DefaultIfEmpty(),
+                    (@t, depWithNull) => new { emp = @t.emp.Name, dep = depWithNull?.Name ?? "noData" });
+
+
+            //var queryRight =
+            //    from dep in deps
+            //    join emp in staff
+            //        on dep.Id equals emp.DepartmentId
+            //    into staffs
+            //    from stafsfWithNull in staffs.DefaultIfEmpty()
+            //    select new { emp = stafsfWithNull?.Name ?? "noData", dep = dep.Name  };
+
+            var queryRight = deps
+                .GroupJoin(staff, dep => dep.Id, emp => emp.DepartmentId, (dep, staffs) => new { dep, staffs })
+                .SelectMany(@t => @t.staffs.DefaultIfEmpty(),
+                    (@t, stafsfWithNull) => new { emp = stafsfWithNull?.Name ?? "noData", dep = @t.dep.Name });
+
+            //var queryFull =
+            //    queryLeft.Union(queryRight);
 
             var queryFull =
                 queryLeft.Union(queryRight);

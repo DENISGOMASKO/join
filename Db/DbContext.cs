@@ -14,7 +14,7 @@ namespace Join.Db
         {
             Departments = new Department[]
             {
-                new Department(0, "Бар "),
+                new Department(0, "Бар"),
                 new Department(1, "Администрация"),
                 new Department(2, "Ай-Ти"),
             };
@@ -25,7 +25,7 @@ namespace Join.Db
                 new Employee(1, "Саша", 1),
                 new Employee(2, "Маша", 0),
                 new Employee(3, "Глаша", 0),
-                new Employee(3, "Даша")
+                new Employee(4, "Даша")
             };
 
         }
